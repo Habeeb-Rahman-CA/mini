@@ -1,0 +1,26 @@
+# Natural English & Symbolic Arithmetic in Mini
+
+assign a to the total of 10 and 5
+assign b to the difference of 20 and 8
+assign c to the product of 4 and 6
+assign d to the quotient of 100 and 4
+assign e to the remainder of 17 and 5
+
+show "Total of 10 and 5:", a
+show "Difference of 20 and 8:", b
+show "Product of 4 and 6:", c
+show "Quotient of 100 and 4:", d
+show "Remainder of 17 and 5:", e
+
+# Infix English operators
+assign score to 10 plus 5 times 2 minus 3
+show "10 plus 5 times 2 minus 3 =", score
+
+assign power_val to 2 to the power of 8
+show "2 to the power of 8 =", power_val
+
+# Mutating numeric variables
+increase score by 13
+decrease score by 5
+show "Updated score:", score
+

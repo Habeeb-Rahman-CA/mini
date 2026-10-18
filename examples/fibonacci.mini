@@ -1,0 +1,18 @@
+# Fibonacci Sequence in Mini (Recursive & Iterative)
+
+make fib(n)
+  if n is at most 1
+    give n
+  end
+  give fib(n - 1) + fib(n - 2)
+end
+
+show "First 10 Fibonacci numbers:"
+assign sequence to []
+
+for i from 0 to 9
+  push fib(i) to sequence
+end
+
+show join(sequence, ", ")
+

@@ -1,0 +1,28 @@
+# Prime Number Finder in Mini
+
+make is_prime(n)
+  if n is less than 2
+    give false
+  end
+
+  assign divisor to 2
+  while the product of divisor and divisor is at most n
+    if the remainder of n and divisor is equal to 0
+      give false
+    end
+    increase divisor by 1
+  end
+
+  give true
+end
+
+assign primes to []
+for candidate from 2 to 50
+  if is_prime(candidate)
+    push candidate to primes
+  end
+end
+
+show "Found", length of primes, "primes up to 50:"
+show join(primes, ", ")
+

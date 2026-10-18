@@ -1,0 +1,31 @@
+{
+  "name": "mini-lang",
+  "version": "1.0.0",
+  "description": "Mini: A natural-English programming language implemented in TypeScript",
+  "type": "module",
+  "main": "dist/src/index.js",
+  "bin": {
+    "mini": "dist/src/cli.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/src/cli.js",
+    "mini": "node dist/src/cli.js",
+    "test": "tsc && node --test dist/tests/mini.test.js"
+  },
+  "keywords": [
+    "programming-language",
+    "interpreter",
+    "natural-english",
+    "lexer",
+    "parser",
+    "ast",
+    "typescript"
+  ],
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "24.13.6",
+    "typescript": "5.9.3"
+  }
+}
+

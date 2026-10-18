@@ -1,0 +1,4 @@
+# Basic Mini Example
+make add(a, b) = a + b
+assign x to the total of 10 and 5
+show add(x, 2)

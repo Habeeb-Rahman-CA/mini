@@ -1,0 +1,14 @@
+# FizzBuzz in Mini (1 to 20)
+
+for n from 1 to 20
+  if the remainder of n and 15 is equal to 0
+    show "FizzBuzz"
+  otherwise if the remainder of n and 3 is equal to 0
+    show "Fizz"
+  otherwise if the remainder of n and 5 is equal to 0
+    show "Buzz"
+  otherwise
+    show n
+  end
+end
+

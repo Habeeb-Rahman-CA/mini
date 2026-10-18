@@ -1,0 +1,27 @@
+# Shopping Cart Receipt Calculator in Mini
+
+make apply_discount(amount, percent) = amount - (amount * percent / 100)
+make add_tax(amount, tax_rate) = round(amount * (1 + tax_rate / 100), 2)
+
+assign prices to list of 29.99, 15.50, 42.00, 19.99
+assign subtotal to 0
+
+for each price in prices
+  increase subtotal by price
+end
+
+assign subtotal to round(subtotal, 2)
+show "Items:", length of prices
+show "Subtotal: $" + subtotal
+
+if subtotal is at least 100
+  assign discounted to round(apply_discount(subtotal, 15), 2)
+  show "15% Bulk Discount Applied: $" + discounted
+otherwise
+  assign discounted to subtotal
+  show "No Discount Applied"
+end
+
+assign final_total to add_tax(discounted, 8)
+show "Final Total (with 8% tax): $" + final_total
+
