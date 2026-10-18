@@ -1,10 +1,10 @@
 {
-  "name": "minilang-cli",
+  "name": "minilang-eng",
   "version": "1.0.0",
   "description": "Mini (minilang): A readable, natural-English programming language and CLI interpreter built in TypeScript",
   "type": "module",
-  "main": "./dist/src/index.js",
-  "types": "./dist/src/index.d.ts",
+  "main": "dist/src/index.js",
+  "types": "dist/src/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/src/index.d.ts",
@@ -16,8 +16,8 @@
     }
   },
   "bin": {
-    "minilang": "./dist/src/cli.js",
-    "mini": "./dist/src/cli.js"
+    "minilang": "dist/src/cli.js",
+    "mini": "dist/src/cli.js"
   },
   "files": [
     "dist/src",

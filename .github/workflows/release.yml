@@ -50,7 +50,7 @@ jobs:
           files: |
             dist/standalone/minilang.mjs
             dist/standalone/minilang.cjs
-            minilang-cli-*.tgz
+            minilang-eng-*.tgz
 
   publish-npm:
     name: Publish to npm Registry

@@ -33,7 +33,7 @@ show add(x, 2)
 ### 1. Install Globally via npm
 
 ```bash
-npm install -g minilang-cli
+npm install -g minilang-eng
 ```
 
 Once installed globally, both `minilang` and `mini` commands are available in any terminal across Linux, macOS, and Windows:
