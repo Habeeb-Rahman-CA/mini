@@ -3,16 +3,23 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Mini Programming Language (minilang) — Documentation</title>
+  <title>Mini — Natural-English Programming Language</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="./styles.css" />
 </head>
 <body>
   <aside class="sidebar">
-    <a href="#overview" class="brand">
-      <span>Mini</span>
-      <span class="brand-badge">v1.0.0</span>
-    </a>
-    <div class="brand-subtitle">Natural-English Programming Language</div>
+    <div class="sidebar-header">
+      <a href="#overview" class="brand">
+        <span class="brand-mark">M</span>
+        <span class="brand-name">Mini</span>
+        <span class="brand-badge">v1.0.0</span>
+      </a>
+      <button id="theme-toggle" class="theme-toggle" title="Toggle Black/White Theme" aria-label="Toggle theme">◐</button>
+    </div>
+    <div class="brand-subtitle">Natural-English Language &amp; CLI</div>
 
     <div class="nav-group">
       <div class="nav-group-title">Getting Started</div>
@@ -28,7 +35,7 @@
       <div class="nav-group-title">Language Reference</div>
       <ul class="nav-list">
         <li><a href="#variables">Variables &amp; Mutation</a></li>
-        <li><a href="#arithmetic">Natural-English Arithmetic</a></li>
+        <li><a href="#arithmetic">Natural-English Math</a></li>
         <li><a href="#comparisons">Comparisons &amp; Logic</a></li>
         <li><a href="#functions">Functions &amp; Recursion</a></li>
         <li><a href="#conditionals">Conditionals</a></li>
@@ -49,47 +56,60 @@
 
   <main class="main">
     <section id="overview" class="hero">
-      <h1>Mini Programming Language</h1>
-      <p>
-        <strong>Mini (`minilang`)</strong> is an expressive, readable programming language that uses clear natural English instead of cryptic punctuation—built from scratch in TypeScript with a dedicated Lexer, Recursive-Descent Parser, AST, Expression Evaluator, and Interpreter (zero <code>eval()</code>).
+      <div class="hero-eyebrow">minilang-eng · TypeScript AST Interpreter · Zero eval()</div>
+      <h1>Code in clear, natural English.</h1>
+      <p class="hero-lead">
+        <strong>Mini (`minilang`)</strong> is a minimalist programming language that replaces cryptic syntax with readable English phrases—backed by a custom Lexer, Recursive-Descent Parser, AST, Expression Evaluator, and Interpreter.
       </p>
       <pre><code>make add(a, b) = a + b
 assign x to the total of 10 and 5
 show add(x, 2)   # Outputs: 17</code></pre>
       <div class="hero-actions">
-        <a href="#playground" class="btn btn-primary">Try in Live Playground</a>
-        <a href="#installation" class="btn btn-secondary">Install CLI (`npm i -g minilang-eng`)</a>
-        <a href="https://github.com/Habeeb-Rahman-CA/mini" class="btn btn-secondary" target="_blank" rel="noopener">GitHub Repository</a>
+        <a href="#playground" class="btn btn-primary">Open Playground</a>
+        <a href="#installation" class="btn btn-secondary">npm i -g minilang-eng</a>
+        <a href="https://github.com/Habeeb-Rahman-CA/mini" class="btn btn-secondary" target="_blank" rel="noopener">GitHub ↗</a>
       </div>
     </section>
 
     <section id="playground">
-      <h2>Interactive Browser Playground</h2>
+      <h2>Interactive Playground</h2>
       <p>
-        Run real <code>.mini</code> code directly in your browser using the compiled Mini AST interpreter, or inspect the Lexer tokens and Abstract Syntax Tree:
+        Execute <code>.mini</code> programs directly in your browser using the compiled Mini AST interpreter, or inspect the token stream and syntax tree:
       </p>
       <div class="playground-card">
         <div class="playground-toolbar">
           <div class="playground-controls">
-            <label for="playground-example"><strong>Example:</strong></label>
-            <select id="playground-example">
-              <option value="hello">Hello Mini (Prompt Example)</option>
-              <option value="arithmetic">Natural-English Arithmetic</option>
-              <option value="fibonacci">Recursive Fibonacci</option>
-              <option value="fizzbuzz">FizzBuzz (1..15)</option>
-              <option value="primes">Prime Number Sieve</option>
-              <option value="cart">Shopping Cart Calculator</option>
+            <span class="playground-label">Preset</span>
+            <select id="playground-example" aria-label="Choose example program">
+              <option value="hello">01 — Hello Mini</option>
+              <option value="arithmetic">02 — Natural-English Arithmetic</option>
+              <option value="fibonacci">03 — Recursive Fibonacci</option>
+              <option value="fizzbuzz">04 — FizzBuzz (1..15)</option>
+              <option value="primes">05 — Prime Number Sieve</option>
+              <option value="cart">06 — Shopping Cart Receipt</option>
             </select>
           </div>
           <div class="playground-controls">
             <button id="btn-run" class="btn btn-primary">Run (Ctrl+Enter)</button>
             <button id="btn-tokens" class="btn btn-secondary">Tokens</button>
-            <button id="btn-ast" class="btn btn-secondary">AST JSON</button>
+            <button id="btn-ast" class="btn btn-secondary">AST</button>
           </div>
         </div>
         <div class="playground-grid">
-          <textarea id="playground-code" class="playground-editor" spellcheck="false" aria-label="Mini source code editor"></textarea>
-          <div id="playground-output" class="playground-output" aria-live="polite"></div>
+          <div class="playground-editor-col">
+            <div class="playground-pane-header">
+              <span>playground.mini</span>
+              <span>UTF-8</span>
+            </div>
+            <textarea id="playground-code" class="playground-editor" spellcheck="false" aria-label="Mini source code editor"></textarea>
+          </div>
+          <div class="playground-output-col">
+            <div class="playground-pane-header">
+              <span id="playground-mode-label">STDOUT</span>
+              <span id="playground-timing">Ready</span>
+            </div>
+            <div id="playground-output" class="playground-output" aria-live="polite"></div>
+          </div>
         </div>
       </div>
     </section>
@@ -121,8 +141,8 @@ minilang --ast examples/hello.mini
 minilang --version
 minilang --help</code></pre>
 
-      <h3>2. Standalone Single-File Bundle &amp; Native Binary</h3>
-      <p>To build self-contained single-file bundles (or Node.js Single Executable Applications for environments without npm):</p>
+      <h3>2. Standalone Single-File Bundle</h3>
+      <p>To build self-contained single-file bundles for environments without npm:</p>
       <pre><code>npm run build
 npm run build:standalone
 node dist/standalone/minilang.mjs run examples/hello.mini</code></pre>
@@ -131,12 +151,12 @@ node dist/standalone/minilang.mjs run examples/hello.mini</code></pre>
     <section id="vscode">
       <h2>VS Code Extension</h2>
       <p>
-        The repository includes a complete VS Code extension in <code>editors/vscode-mini/</code> providing:
+        The repository includes a complete VS Code extension in <code>editors/vscode-mini/</code>:
       </p>
       <div class="card-grid">
         <div class="card">
           <h4>Syntax Highlighting</h4>
-          <p>TextMate grammar highlighting natural-English phrases, functions, loops, literals, and comments.</p>
+          <p>TextMate grammar highlighting natural-English phrases, declarations, loops, literals, and comments.</p>
         </div>
         <div class="card">
           <h4>Live Error Diagnostics</h4>
@@ -147,9 +167,7 @@ node dist/standalone/minilang.mjs run examples/hello.mini</code></pre>
           <p>Custom dark/light <code>.mini</code> icons, code folding, auto-indentation, and snippets.</p>
         </div>
       </div>
-      <pre><code># Package or install locally in VS Code:
-cd editors/vscode-mini
-npx @vscode/vsce package
+      <pre><code>cd editors/vscode-mini
 code --install-extension minilang-vscode-1.0.0.vsix</code></pre>
     </section>
 
@@ -179,37 +197,37 @@ decrease count by 1</code></pre>
         </thead>
         <tbody>
           <tr>
-            <td>Addition</td>
+            <td><strong>Addition</strong></td>
             <td><code>the total of a and b</code> / <code>the sum of a and b</code></td>
             <td><code>a plus b</code> / <code>a added to b</code></td>
             <td><code>a + b</code></td>
           </tr>
           <tr>
-            <td>Subtraction</td>
+            <td><strong>Subtraction</strong></td>
             <td><code>the difference of a and b</code></td>
             <td><code>a minus b</code></td>
             <td><code>a - b</code></td>
           </tr>
           <tr>
-            <td>Multiplication</td>
+            <td><strong>Multiplication</strong></td>
             <td><code>the product of a and b</code></td>
             <td><code>a times b</code> / <code>a multiplied by b</code></td>
             <td><code>a * b</code></td>
           </tr>
           <tr>
-            <td>Division</td>
+            <td><strong>Division</strong></td>
             <td><code>the quotient of a and b</code></td>
             <td><code>a divided by b</code> / <code>a over b</code></td>
             <td><code>a / b</code></td>
           </tr>
           <tr>
-            <td>Remainder</td>
+            <td><strong>Remainder</strong></td>
             <td><code>the remainder of a and b</code></td>
             <td><code>a modulo b</code> / <code>a mod b</code></td>
             <td><code>a % b</code></td>
           </tr>
           <tr>
-            <td>Exponentiation</td>
+            <td><strong>Exponentiation</strong></td>
             <td>—</td>
             <td><code>a to the power of b</code></td>
             <td><code>a ^ b</code> / <code>a ** b</code></td>
@@ -230,37 +248,37 @@ decrease count by 1</code></pre>
         </thead>
         <tbody>
           <tr>
-            <td>Equal</td>
+            <td><strong>Equal</strong></td>
             <td><code>is equal to</code>, <code>equals</code>, <code>is</code></td>
             <td><code>==</code></td>
           </tr>
           <tr>
-            <td>Not Equal</td>
+            <td><strong>Not Equal</strong></td>
             <td><code>is not equal to</code>, <code>is not</code>, <code>isn't</code></td>
             <td><code>!=</code></td>
           </tr>
           <tr>
-            <td>Greater Than</td>
+            <td><strong>Greater Than</strong></td>
             <td><code>is greater than</code>, <code>is more than</code>, <code>exceeds</code></td>
             <td><code>&gt;</code></td>
           </tr>
           <tr>
-            <td>Less Than</td>
+            <td><strong>Less Than</strong></td>
             <td><code>is less than</code>, <code>is under</code>, <code>is below</code></td>
             <td><code>&lt;</code></td>
           </tr>
           <tr>
-            <td>Greater or Equal</td>
+            <td><strong>Greater or Equal</strong></td>
             <td><code>is at least</code>, <code>is greater than or equal to</code></td>
             <td><code>&gt;=</code></td>
           </tr>
           <tr>
-            <td>Less or Equal</td>
+            <td><strong>Less or Equal</strong></td>
             <td><code>is at most</code>, <code>is less than or equal to</code></td>
             <td><code>&lt;=</code></td>
           </tr>
           <tr>
-            <td>Boolean Logic</td>
+            <td><strong>Boolean Logic</strong></td>
             <td><code>and</code>, <code>or</code>, <code>not</code></td>
             <td><code>&amp;&amp;</code>, <code>||</code>, <code>!</code></td>
           </tr>
@@ -356,22 +374,22 @@ show join(fruits, ", ")</code></pre>
         </thead>
         <tbody>
           <tr>
-            <td>Maximum Loop Iterations</td>
+            <td><strong>Maximum Loop Iterations</strong></td>
             <td><code>100,000</code> iterations per loop</td>
             <td><code>--max-iterations &lt;n&gt;</code></td>
           </tr>
           <tr>
-            <td>Maximum Call Stack Depth</td>
+            <td><strong>Maximum Call Stack Depth</strong></td>
             <td><code>1,000</code> recursive frames</td>
             <td><code>--max-depth &lt;n&gt;</code></td>
           </tr>
           <tr>
-            <td>Wall-Clock Execution Timeout</td>
+            <td><strong>Wall-Clock Execution Timeout</strong></td>
             <td><code>5,000</code> ms (<code>0</code> disables)</td>
             <td><code>--timeout &lt;ms&gt;</code></td>
           </tr>
           <tr>
-            <td>Output Flood Guard</td>
+            <td><strong>Output Flood Guard</strong></td>
             <td><code>10,000</code> lines</td>
             <td>Programmatic <code>maxOutputLines</code></td>
           </tr>
@@ -432,12 +450,16 @@ show join(fruits, ", ")</code></pre>
     <section id="contributing">
       <h2>Contributing &amp; Releases</h2>
       <p>
-        We welcome contributions! See <a href="https://github.com/Habeeb-Rahman-CA/mini/blob/main/CONTRIBUTING.md" style="color: var(--accent);">CONTRIBUTING.md</a> for architecture details, test instructions (<code>npm test</code>), and release workflows.
+        Contributions are welcome. Read <a href="https://github.com/Habeeb-Rahman-CA/mini/blob/main/CONTRIBUTING.md" style="color: var(--text);">CONTRIBUTING.md</a> for architecture details, test instructions (<code>npm test</code>), and release workflows.
       </p>
     </section>
+
+    <footer class="footer">
+      <span>Mini Programming Language · MIT License</span>
+      <a href="https://github.com/Habeeb-Rahman-CA/mini" target="_blank" rel="noopener">github.com/Habeeb-Rahman-CA/mini</a>
+    </footer>
   </main>
 
   <script type="module" src="./app.js"></script>
 </body>
 </html>
-

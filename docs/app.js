@@ -102,16 +102,60 @@ show "Final Total (8% tax): $" + add_tax(discounted, 8)`,
 const editorEl = document.getElementById("playground-code");
 const outputEl = document.getElementById("playground-output");
 const selectEl = document.getElementById("playground-example");
+const modeLabelEl = document.getElementById("playground-mode-label");
+const timingEl = document.getElementById("playground-timing");
 const runBtn = document.getElementById("btn-run");
 const tokensBtn = document.getElementById("btn-tokens");
 const astBtn = document.getElementById("btn-ast");
+const themeToggleBtn = document.getElementById("theme-toggle");
+
+// Theme Toggle (Minimalist Black vs White)
+const savedTheme = localStorage.getItem("mini-docs-theme");
+if (savedTheme === "light") {
+  document.documentElement.setAttribute("data-theme", "light");
+}
+
+themeToggleBtn?.addEventListener("click", () => {
+  const isLight =
+    document.documentElement.getAttribute("data-theme") === "light";
+  if (isLight) {
+    document.documentElement.removeAttribute("data-theme");
+    localStorage.setItem("mini-docs-theme", "dark");
+  } else {
+    document.documentElement.setAttribute("data-theme", "light");
+    localStorage.setItem("mini-docs-theme", "light");
+  }
+});
+
+// Add Copy buttons to all <pre> blocks
+document.querySelectorAll("pre").forEach((pre) => {
+  const wrapper = document.createElement("div");
+  wrapper.className = "pre-wrapper";
+  pre.parentNode.insertBefore(wrapper, pre);
+  wrapper.appendChild(pre);
+
+  const btn = document.createElement("button");
+  btn.className = "copy-btn";
+  btn.textContent = "Copy";
+  btn.addEventListener("click", () => {
+    const text = pre.innerText;
+    navigator.clipboard?.writeText(text);
+    btn.textContent = "Copied";
+    setTimeout(() => {
+      btn.textContent = "Copy";
+    }, 1400);
+  });
+  wrapper.appendChild(btn);
+});
 
 function executePlayground(mode = "run") {
   const code = editorEl.value;
   outputEl.className = "playground-output";
+  const t0 = performance.now();
 
   try {
     if (mode === "tokens") {
+      if (modeLabelEl) modeLabelEl.textContent = "LEXER TOKENS";
       const tokens = new Lexer(code, "playground.mini").tokenize();
       const formatted = tokens
         .map(
@@ -120,16 +164,22 @@ function executePlayground(mode = "run") {
         )
         .join("\n");
       outputEl.textContent = formatted;
+      if (timingEl)
+        timingEl.textContent = `${tokens.length} tokens · ${(performance.now() - t0).toFixed(1)}ms`;
       return;
     }
 
     if (mode === "ast") {
+      if (modeLabelEl) modeLabelEl.textContent = "AST (JSON)";
       const tokens = new Lexer(code, "playground.mini").tokenize();
       const ast = new Parser(tokens, code).parse();
       outputEl.textContent = JSON.stringify(ast, null, 2);
+      if (timingEl)
+        timingEl.textContent = `${ast.body.length} statements · ${(performance.now() - t0).toFixed(1)}ms`;
       return;
     }
 
+    if (modeLabelEl) modeLabelEl.textContent = "STDOUT";
     const lines = [];
     runMini(code, {
       file: "playground.mini",
@@ -137,11 +187,13 @@ function executePlayground(mode = "run") {
       maxExecutionTimeMs: 2500,
       maxLoopIterations: 50000,
     });
-    outputEl.classList.add("output-success");
     outputEl.textContent =
       lines.length > 0 ? lines.join("\n") : "(Program finished with no output)";
+    if (timingEl)
+      timingEl.textContent = `${(performance.now() - t0).toFixed(1)}ms`;
   } catch (err) {
     outputEl.classList.add("output-error");
+    if (timingEl) timingEl.textContent = "Error";
     if (err instanceof MiniError) {
       outputEl.textContent = err.format();
     } else {
@@ -173,4 +225,3 @@ if (editorEl && selectEl) {
     }
   });
 }
-
