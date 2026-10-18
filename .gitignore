@@ -1,9 +1,12 @@
 # Dependencies
 node_modules/
 
-# Compiled TypeScript output
+# Compiled TypeScript & standalone output
 dist/
 *.tsbuildinfo
+sea-config.json
+*.tgz
+*.vsix
 
 # Logs
 logs/
@@ -30,4 +33,3 @@ Thumbs.db
 *.swp
 *.swo
 *~
-

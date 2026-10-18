@@ -45,6 +45,8 @@ export interface InterpreterOptions {
   onOutput?: (line: string) => void;
   maxCallDepth?: number;
   maxLoopIterations?: number;
+  maxExecutionTimeMs?: number;
+  maxOutputLines?: number;
 }
 
 export class Interpreter {
@@ -52,8 +54,11 @@ export class Interpreter {
   private readonly onOutput: (line: string) => void;
   private readonly maxCallDepth: number;
   private readonly maxLoopIterations: number;
+  private readonly maxExecutionTimeMs: number;
+  private readonly maxOutputLines: number;
   private callDepth: number = 0;
   private loopDepth: number = 0;
+  private executionStartTime: number = 0;
 
   public readonly globalEnv: Environment;
   public readonly evaluator: Evaluator;
@@ -64,6 +69,8 @@ export class Interpreter {
     this.onOutput = options.onOutput ?? ((line: string) => console.log(line));
     this.maxCallDepth = options.maxCallDepth ?? 1000;
     this.maxLoopIterations = options.maxLoopIterations ?? 100_000;
+    this.maxExecutionTimeMs = options.maxExecutionTimeMs ?? 5000;
+    this.maxOutputLines = options.maxOutputLines ?? 10_000;
 
     this.globalEnv = new Environment(undefined, this.source);
     this.registerBuiltins();
@@ -76,6 +83,7 @@ export class Interpreter {
 
   public interpret(program: Program): MiniValue {
     let lastValue: MiniValue = null;
+    this.executionStartTime = Date.now();
     try {
       for (const stmt of program.body) {
         lastValue = this.executeStatement(stmt, this.globalEnv);
@@ -105,6 +113,7 @@ export class Interpreter {
   }
 
   private executeStatement(stmt: Stmt, env: Environment): MiniValue {
+    this.checkTimeLimit(stmt.loc);
     switch (stmt.kind) {
       case "AssignStmt":
         return this.executeAssign(stmt, env);
@@ -236,6 +245,15 @@ export class Interpreter {
   }
 
   private executeShow(stmt: ShowStmt, env: Environment): MiniValue {
+    if (this.maxOutputLines > 0 && this.outputs.length >= this.maxOutputLines) {
+      throw new RuntimeError(
+        "Runtime Error",
+        `Program exceeded maximum output limit (${this.maxOutputLines} lines)`,
+        stmt.loc,
+        this.source,
+        `Check for an unintended loop printing too many lines.`
+      );
+    }
     const evaluated = stmt.values.map((expr) =>
       this.evaluator.evaluate(expr, env)
     );
@@ -526,6 +544,23 @@ export class Interpreter {
         loc,
         this.source,
         `Check your loop condition to make sure the loop eventually terminates.`
+      );
+    }
+    this.checkTimeLimit(loc);
+  }
+
+  private checkTimeLimit(loc: SourceLocation): void {
+    if (
+      this.maxExecutionTimeMs > 0 &&
+      this.executionStartTime > 0 &&
+      Date.now() - this.executionStartTime > this.maxExecutionTimeMs
+    ) {
+      throw new RuntimeError(
+        "Runtime Error",
+        `Execution timed out after ${this.maxExecutionTimeMs}ms`,
+        loc,
+        this.source,
+        `Optimize long-running loops/recursion or increase the timeout with --timeout <ms>.`
       );
     }
   }

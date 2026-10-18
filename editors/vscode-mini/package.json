@@ -1,0 +1,87 @@
+{
+  "name": "minilang-vscode",
+  "displayName": "Mini Programming Language",
+  "description": "Syntax highlighting, file icons, code snippets, and live error diagnostics for the Mini (.mini) natural-English programming language.",
+  "version": "1.0.0",
+  "publisher": "habeeb-rahman-ca",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Habeeb-Rahman-CA/mini.git"
+  },
+  "homepage": "https://habeeb-rahman-ca.github.io/mini/",
+  "bugs": {
+    "url": "https://github.com/Habeeb-Rahman-CA/mini/issues"
+  },
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "Linters",
+    "Snippets"
+  ],
+  "keywords": [
+    "mini",
+    "minilang",
+    "natural-english",
+    "programming-language"
+  ],
+  "activationEvents": [
+    "onLanguage:mini"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "languages": [
+      {
+        "id": "mini",
+        "aliases": [
+          "Mini",
+          "minilang",
+          "mini"
+        ],
+        "extensions": [
+          ".mini"
+        ],
+        "configuration": "./language-configuration.json",
+        "icon": {
+          "light": "./icons/mini-light.svg",
+          "dark": "./icons/mini-dark.svg"
+        }
+      }
+    ],
+    "grammars": [
+      {
+        "language": "mini",
+        "scopeName": "source.mini",
+        "path": "./syntaxes/mini.tmLanguage.json"
+      }
+    ],
+    "snippets": [
+      {
+        "language": "mini",
+        "path": "./snippets/mini.code-snippets"
+      }
+    ],
+    "commands": [
+      {
+        "command": "mini.runFile",
+        "title": "Mini: Run Current .mini File"
+      },
+      {
+        "command": "mini.checkFile",
+        "title": "Mini: Check Current .mini File Syntax"
+      }
+    ],
+    "menus": {
+      "editor/title/run": [
+        {
+          "command": "mini.runFile",
+          "when": "resourceLangId == mini",
+          "group": "navigation"
+        }
+      ]
+    }
+  }
+}
+

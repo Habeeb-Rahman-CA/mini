@@ -1,0 +1,52 @@
+name: CI
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-test:
+    name: Test (${{ matrix.os }}, Node ${{ matrix.node-version }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        node-version: ["20.x", "22.x", "24.x"]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: "npm"
+
+      - name: Install dependencies (reproducible)
+        run: npm ci
+
+      - name: Build TypeScript & bundles
+        run: npm run build
+
+      - name: Run unit & integration test suite
+        run: npm test
+
+      - name: Validate all .mini example programs
+        run: npm run check:examples
+
+      - name: Build standalone single-file CLI bundles
+        run: npm run build:standalone
+
+      - name: Verify standalone CLI execution
+        run: node dist/standalone/minilang.mjs run examples/hello.mini
+
+      - name: Verify npm package tarball contents
+        run: npm pack --dry-run
+

@@ -1,0 +1,30 @@
+# Student Gradebook Analyzer in Mini
+
+make letter_grade(score)
+  if score is at least 90 then give "A"
+  if score is at least 80 then give "B"
+  if score is at least 70 then give "C"
+  if score is at least 60 then give "D"
+  give "F"
+end
+
+assign scores to list of 94, 82, 76, 88, 91, 67, 100, 85
+assign total to 0
+assign honors_count to 0
+
+for each s in scores
+  increase total by s
+  if s is at least 90
+    increase honors_count by 1
+  end
+end
+
+assign count to length of scores
+assign average to round(the quotient of total and count, 2)
+
+show "Class Size:", count
+show "Highest Score:", max(scores)
+show "Lowest Score:", min(scores)
+show "Class Average:", average, "(" + letter_grade(average) + ")"
+show "Honors Students (90+):", honors_count
+

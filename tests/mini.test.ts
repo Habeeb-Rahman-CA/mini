@@ -2,7 +2,9 @@ import * as assert from "node:assert/strict";
 import * as fs from "node:fs";
 import * as path from "node:path";
 import { describe, it } from "node:test";
+import { runCli } from "../src/cli.js";
 import {
+  checkMini,
   Lexer,
   LexerError,
   MiniError,
@@ -11,12 +13,27 @@ import {
   runMini,
   RuntimeError,
   TokenType,
+  VERSION,
 } from "../src/index.js";
 
 function evalProgram(code: string): string[] {
   const outputs: string[] = [];
   runMini(code, { onOutput: (line) => outputs.push(line) });
   return outputs;
+}
+
+function invokeCli(args: string[]): {
+  exitCode: number;
+  stdout: string[];
+  stderr: string[];
+} {
+  const stdout: string[] = [];
+  const stderr: string[] = [];
+  const exitCode = runCli(args, {
+    stdout: (msg) => stdout.push(msg),
+    stderr: (msg) => stderr.push(msg),
+  });
+  return { exitCode, stdout, stderr };
 }
 
 describe("Mini Programming Language", () => {
@@ -65,6 +82,12 @@ show 42
       assert.deepEqual(evalProgram(code), ["42"]);
     });
 
+    it("handles Windows CRLF (\\r\\n) line endings identically to LF (\\n)", () => {
+      const code =
+        "make add(a, b) = a + b\r\nassign x to the total of 10 and 5\r\nshow add(x, 2)\r\n";
+      assert.deepEqual(evalProgram(code), ["17"]);
+    });
+
     it("throws a helpful LexerError on unterminated strings", () => {
       assert.throws(
         () => evalProgram(`show "unterminated`),
@@ -79,7 +102,7 @@ show 42
     });
   });
 
-  describe("Parser & AST", () => {
+  describe("Parser, AST & Static Syntax Checker (checkMini)", () => {
     it("produces a valid AST with FunctionDeclStmt, AssignStmt, and ShowStmt", () => {
       const code = `
 make add(a, b) = a + b
@@ -109,6 +132,18 @@ if 10 is greater than 5
           return true;
         }
       );
+    });
+
+    it("validates syntax without executing code via checkMini()", () => {
+      const validResult = checkMini("assign x to 10\nshow x", "ok.mini");
+      assert.equal(validResult.valid, true);
+      assert.equal(validResult.diagnostics.length, 0);
+
+      const invalidResult = checkMini("if x is greater than 5\n  show x", "bad.mini");
+      assert.equal(invalidResult.valid, false);
+      assert.equal(invalidResult.diagnostics.length, 1);
+      assert.equal(invalidResult.diagnostics[0].category, "Syntax Error");
+      assert.equal(invalidResult.diagnostics[0].file, "bad.mini");
     });
   });
 
@@ -307,7 +342,7 @@ show upper("mini"), min(10, 3, 8), max(10, 3, 8), sqrt(49)
     });
   });
 
-  describe("Meaningful Error Messages", () => {
+  describe("Meaningful Error Messages & Safe Execution Limits", () => {
     it("suggests closest variable name on Name Error", () => {
       const code = `
 assign total_price to 50
@@ -352,6 +387,110 @@ show add(1)
         }
       );
     });
+
+    it("enforces maxLoopIterations safety limit on infinite loops", () => {
+      const code = `
+while true
+  assign x to 1
+end
+`;
+      assert.throws(
+        () => runMini(code, { maxLoopIterations: 25 }),
+        (err: unknown) => {
+          assert.ok(err instanceof RuntimeError);
+          assert.match(
+            err.message,
+            /Loop exceeded maximum iteration limit \(25\)/
+          );
+          return true;
+        }
+      );
+    });
+
+    it("enforces maxCallDepth safety limit on infinite recursion", () => {
+      const code = `
+make loop_forever(n) = loop_forever(n + 1)
+show loop_forever(1)
+`;
+      assert.throws(
+        () => runMini(code, { maxCallDepth: 20 }),
+        (err: unknown) => {
+          assert.ok(err instanceof RuntimeError);
+          assert.match(
+            err.message,
+            /Maximum function call depth \(20\) exceeded/
+          );
+          return true;
+        }
+      );
+    });
+
+    it("enforces maxOutputLines safety limit on runaway output", () => {
+      const code = `
+repeat 50 times
+  show "line"
+end
+`;
+      assert.throws(
+        () =>
+          runMini(code, {
+            maxOutputLines: 10,
+            onOutput: () => {},
+          }),
+        (err: unknown) => {
+          assert.ok(err instanceof RuntimeError);
+          assert.match(
+            err.message,
+            /Program exceeded maximum output limit \(10 lines\)/
+          );
+          return true;
+        }
+      );
+    });
+  });
+
+  describe("CLI Subcommands & Flags", () => {
+    it("supports --version and --help", () => {
+      const ver = invokeCli(["--version"]);
+      assert.equal(ver.exitCode, 0);
+      assert.deepEqual(ver.stdout, [VERSION]);
+
+      const help = invokeCli(["--help"]);
+      assert.equal(help.exitCode, 0);
+      assert.match(help.stdout.join("\n"), /minilang run <file\.mini>/);
+    });
+
+    it("supports 'run', 'check', and 'check --json' subcommands", () => {
+      const runRes = invokeCli(["run", "examples/hello.mini"]);
+      assert.equal(runRes.exitCode, 0);
+      assert.deepEqual(runRes.stdout, ["17"]);
+
+      const checkRes = invokeCli(["check", "examples/hello.mini"]);
+      assert.equal(checkRes.exitCode, 0);
+      assert.match(checkRes.stdout[0], /OK: examples\/hello\.mini has valid syntax/);
+
+      const jsonCheckRes = invokeCli([
+        "check",
+        "--json",
+        "-e",
+        "if x > 5\n  show x",
+      ]);
+      assert.equal(jsonCheckRes.exitCode, 1);
+      const parsed = JSON.parse(jsonCheckRes.stdout.join("\n"));
+      assert.equal(parsed.valid, false);
+      assert.equal(parsed.diagnostics[0].category, "Syntax Error");
+    });
+
+    it("supports --max-iterations and --max-depth CLI safety flags", () => {
+      const res = invokeCli([
+        "--max-iterations",
+        "10",
+        "-e",
+        "while true\n  assign x to 1\nend",
+      ]);
+      assert.equal(res.exitCode, 1);
+      assert.match(res.stderr.join("\n"), /maximum iteration limit \(10\)/);
+    });
   });
 
   describe("Examples Directory Verification", () => {
@@ -361,7 +500,7 @@ show add(1)
         .readdirSync(examplesDir)
         .filter((f) => f.endsWith(".mini"));
 
-      assert.ok(files.length >= 6, "Expected at least 6 example .mini files");
+      assert.ok(files.length >= 8, "Expected at least 8 example .mini files");
 
       for (const file of files) {
         const fullPath = path.join(examplesDir, file);
@@ -379,4 +518,3 @@ show add(1)
     });
   });
 });
-

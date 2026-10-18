@@ -1,0 +1,14 @@
+# Temperature Converter Table in Mini
+
+make to_fahrenheit(celsius) = round(the total of (celsius multiplied by 1.8) and 32, 1)
+make to_kelvin(celsius) = round(the total of celsius and 273.15, 2)
+
+show "Celsius | Fahrenheit | Kelvin"
+show "-----------------------------"
+
+for c from 0 to 100 by 25
+  assign f to to_fahrenheit(c)
+  assign k to to_kelvin(c)
+  show c, "C    |", f, "F     |", k, "K"
+end
+

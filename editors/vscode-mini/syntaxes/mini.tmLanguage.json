@@ -1,0 +1,158 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "Mini",
+  "scopeName": "source.mini",
+  "patterns": [
+    { "include": "#comments" },
+    { "include": "#strings" },
+    { "include": "#numbers" },
+    { "include": "#constants" },
+    { "include": "#declarations" },
+    { "include": "#control-keywords" },
+    { "include": "#english-operators" },
+    { "include": "#builtins" },
+    { "include": "#function-calls" },
+    { "include": "#symbolic-operators" },
+    { "include": "#identifiers" }
+  ],
+  "repository": {
+    "comments": {
+      "patterns": [
+        {
+          "name": "comment.line.number-sign.mini",
+          "match": "#.*$"
+        },
+        {
+          "name": "comment.line.double-slash.mini",
+          "match": "//.*$"
+        },
+        {
+          "name": "comment.line.note.mini",
+          "match": "(?i)\\bnote:.*$"
+        }
+      ]
+    },
+    "strings": {
+      "patterns": [
+        {
+          "name": "string.quoted.double.mini",
+          "begin": "\"",
+          "end": "\"",
+          "patterns": [
+            {
+              "name": "constant.character.escape.mini",
+              "match": "\\\\."
+            }
+          ]
+        },
+        {
+          "name": "string.quoted.single.mini",
+          "begin": "'",
+          "end": "'",
+          "patterns": [
+            {
+              "name": "constant.character.escape.mini",
+              "match": "\\\\."
+            }
+          ]
+        }
+      ]
+    },
+    "numbers": {
+      "patterns": [
+        {
+          "name": "constant.numeric.mini",
+          "match": "\\b\\d+(?:\\.\\d+)?\\b"
+        }
+      ]
+    },
+    "constants": {
+      "patterns": [
+        {
+          "name": "constant.language.boolean.mini",
+          "match": "(?i)\\b(true|false|yes|no)\\b"
+        },
+        {
+          "name": "constant.language.null.mini",
+          "match": "(?i)\\b(nothing|null)\\b"
+        }
+      ]
+    },
+    "declarations": {
+      "patterns": [
+        {
+          "match": "(?i)\\b(make|define)\\s+([a-zA-Z_][a-zA-Z0-9_]*)",
+          "captures": {
+            "1": { "name": "keyword.declaration.function.mini" },
+            "2": { "name": "entity.name.function.mini" }
+          }
+        },
+        {
+          "name": "keyword.declaration.variable.mini",
+          "match": "(?i)\\b(assign|set|let|be|increase|decrease|push)\\b"
+        }
+      ]
+    },
+    "control-keywords": {
+      "patterns": [
+        {
+          "name": "keyword.control.mini",
+          "match": "(?i)\\b(if|when|then|otherwise|else|do|end|repeat|times|time|while|as\\s+long\\s+as|for|each|every|from|to|by|step|in|give|return|stop|break|skip|continue)\\b"
+        },
+        {
+          "name": "keyword.other.output.mini",
+          "match": "(?i)\\b(show|print|say)\\b"
+        }
+      ]
+    },
+    "english-operators": {
+      "patterns": [
+        {
+          "name": "keyword.operator.comparison.english.mini",
+          "match": "(?i)\\b(is\\s+greater\\s+than\\s+or\\s+equal\\s+to|is\\s+less\\s+than\\s+or\\s+equal\\s+to|is\\s+not\\s+equal\\s+to|is\\s+equal\\s+to|is\\s+greater\\s+than|is\\s+more\\s+than|is\\s+less\\s+than|is\\s+at\\s+least|is\\s+at\\s+most|is\\s+above|is\\s+below|is\\s+under|is\\s+not|isn't|equals|exceeds|is)\\b"
+        },
+        {
+          "name": "keyword.operator.arithmetic.english.mini",
+          "match": "(?i)\\b((?:the\\s+)?(?:total|sum|difference|product|quotient|ratio|remainder|length|size|list)\\s+of|to\\s+the\\s+power\\s+of|multiplied\\s+by|divided\\s+by|added\\s+to|plus|minus|over|modulo|mod|negative|at)\\b"
+        },
+        {
+          "name": "keyword.operator.logical.english.mini",
+          "match": "(?i)\\b(and|or|not)\\b"
+        }
+      ]
+    },
+    "builtins": {
+      "patterns": [
+        {
+          "name": "support.function.builtin.mini",
+          "match": "\\b(abs|round|floor|ceil|sqrt|min|max|upper|lower|trim|split|join|length|range|type|text|number)(?=\\s*\\()"
+        }
+      ]
+    },
+    "function-calls": {
+      "patterns": [
+        {
+          "name": "entity.name.function.call.mini",
+          "match": "\\b([a-zA-Z_][a-zA-Z0-9_]*)(?=\\s*\\()"
+        }
+      ]
+    },
+    "symbolic-operators": {
+      "patterns": [
+        {
+          "name": "keyword.operator.symbolic.mini",
+          "match": "(==|!=|>=|<=|&&|\\|\\||\\*\\*|[=+\\-*/%^><!])"
+        }
+      ]
+    },
+    "identifiers": {
+      "patterns": [
+        {
+          "name": "variable.other.mini",
+          "match": "\\b[a-zA-Z_][a-zA-Z0-9_]*\\b"
+        }
+      ]
+    }
+  }
+}
+

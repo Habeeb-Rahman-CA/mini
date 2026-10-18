@@ -1,25 +1,65 @@
 {
-  "name": "mini-lang",
+  "name": "minilang-cli",
   "version": "1.0.0",
-  "description": "Mini: A natural-English programming language implemented in TypeScript",
+  "description": "Mini (minilang): A readable, natural-English programming language and CLI interpreter built in TypeScript",
   "type": "module",
-  "main": "dist/src/index.js",
+  "main": "./dist/src/index.js",
+  "types": "./dist/src/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/src/index.d.ts",
+      "default": "./dist/src/index.js"
+    },
+    "./cli": {
+      "types": "./dist/src/cli.d.ts",
+      "default": "./dist/src/cli.js"
+    }
+  },
   "bin": {
-    "mini": "dist/src/cli.js"
+    "minilang": "./dist/src/cli.js",
+    "mini": "./dist/src/cli.js"
+  },
+  "files": [
+    "dist/src",
+    "examples",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md"
+  ],
+  "engines": {
+    "node": ">=18.0.0"
   },
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && node scripts/build-browser-bundle.mjs",
+    "build:tsc": "tsc",
+    "build:standalone": "node scripts/build-standalone.mjs",
     "start": "node dist/src/cli.js",
     "mini": "node dist/src/cli.js",
-    "test": "tsc && node --test dist/tests/mini.test.js"
+    "minilang": "node dist/src/cli.js",
+    "test": "tsc && node --test dist/tests/mini.test.js",
+    "check:examples": "node scripts/check-examples.mjs",
+    "prepublishOnly": "npm run build && npm test"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Habeeb-Rahman-CA/mini.git"
+  },
+  "homepage": "https://habeeb-rahman-ca.github.io/mini/",
+  "bugs": {
+    "url": "https://github.com/Habeeb-Rahman-CA/mini/issues"
+  },
+  "author": "Habeeb Rahman CA <habeebrahmanca07@gmail.com>",
   "keywords": [
     "programming-language",
+    "minilang",
+    "mini",
     "interpreter",
     "natural-english",
     "lexer",
     "parser",
     "ast",
+    "cli",
+    "repl",
     "typescript"
   ],
   "license": "MIT",
@@ -28,4 +68,3 @@
     "typescript": "5.9.3"
   }
 }
-

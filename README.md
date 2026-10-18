@@ -1,6 +1,15 @@
-# Mini Programming Language
+# Mini Programming Language (`minilang`)
 
-**Mini** is a readable, natural-English programming language implemented from scratch in TypeScript and Node.js (without `eval()`). It lets you write programs using clear, concise English phrases while seamlessly supporting familiar mathematical notation when you want it.
+[![CI](https://github.com/Habeeb-Rahman-CA/mini/actions/workflows/ci.yml/badge.svg)](https://github.com/Habeeb-Rahman-CA/mini/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Node.js](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen.svg)](package.json)
+
+**Mini (`minilang`)** is a readable, natural-English programming language implemented from scratch in TypeScript and Node.js (without `eval()`). It lets you write programs using clear, concise English phrases while seamlessly supporting familiar mathematical notation when you want it.
+
+- **Documentation & Live Browser Playground**: [`docs/index.html`](docs/index.html) (`https://habeeb-rahman-ca.github.io/mini/`)
+- **VS Code Extension**: [`editors/vscode-mini/`](editors/vscode-mini/)
+- **Contributing Guide**: [`CONTRIBUTING.md`](CONTRIBUTING.md)
+- **Security Policy**: [`SECURITY.md`](SECURITY.md)
 
 ---
 
@@ -19,47 +28,73 @@ show add(x, 2)
 
 ---
 
+## Installation & CLI Usage
+
+### 1. Install Globally via npm
+
+```bash
+npm install -g minilang-cli
+```
+
+Once installed globally, both `minilang` and `mini` commands are available in any terminal across Linux, macOS, and Windows:
+
+```bash
+# Run a .mini file
+minilang run examples/hello.mini
+minilang examples/hello.mini
+
+# Start the interactive REPL
+minilang repl
+
+# Check syntax without executing (with optional JSON output for tooling/IDEs)
+minilang check examples/hello.mini
+minilang check --json examples/hello.mini
+
+# Evaluate inline Mini code
+minilang -e 'assign x to the total of 10 and 5; show x'
+
+# Inspect Lexer Tokens or Parsed AST
+minilang --tokens examples/hello.mini
+minilang --ast examples/hello.mini
+
+# Configure safe execution limits
+minilang --max-iterations 50000 --max-depth 500 --timeout 3000 run examples/hello.mini
+
+# Show version or help
+minilang --version
+minilang --help
+```
+
+### 2. Local Development & Standalone Builds
+
+```bash
+# Clone & install dependencies
+git clone https://github.com/Habeeb-Rahman-CA/mini.git
+cd mini
+npm install
+
+# Compile TypeScript, browser playground bundle, and VS Code diagnostics engine
+npm run build
+
+# Run the automated test suite and validate all example programs
+npm test
+npm run check:examples
+
+# Build single-file standalone CLI bundles (dist/standalone/minilang.mjs & .cjs)
+npm run build:standalone
+```
+
+---
+
 ## Architecture Overview
 
-Mini is built from scratch in TypeScript with a clean five-stage pipeline:
+Mini is built from scratch in TypeScript with a five-stage pipeline:
 
 1. **Lexer ([`src/lexer.ts`](src/lexer.ts) & [`src/tokens.ts`](src/tokens.ts))**: Scans source text into tokens, tracks line/column source locations, handles comments (`#`, `//`, `note:`), and merges multi-word natural English operators (such as `is greater than`, `is equal to`, `divided by`, `to the power of`) into single semantic tokens.
 2. **Parser & AST ([`src/parser.ts`](src/parser.ts) & [`src/ast.ts`](src/ast.ts))**: A recursive-descent parser with full operator precedence that constructs a strongly-typed Abstract Syntax Tree (`Program`, `Stmt`, `Expr`).
 3. **Expression Evaluator ([`src/evaluator.ts`](src/evaluator.ts))**: Evaluates AST expression nodes (`LiteralExpr`, `IdentifierExpr`, `UnaryExpr`, `BinaryExpr`, `CallExpr`, `ListExpr`, `IndexExpr`) with runtime type checking and short-circuit boolean logic.
-4. **Environment & Interpreter ([`src/environment.ts`](src/environment.ts) & [`src/interpreter.ts`](src/interpreter.ts))**: Manages lexically scoped variables and closures, executes statements, handles control flow (`if`, `repeat`, `while`, `for`, `give`, `stop`, `skip`), and provides built-in functions.
+4. **Environment & Interpreter ([`src/environment.ts`](src/environment.ts) & [`src/interpreter.ts`](src/interpreter.ts))**: Manages lexically scoped variables and closures, executes statements, enforces safe execution limits (`maxLoopIterations`, `maxCallDepth`, `maxExecutionTimeMs`, `maxOutputLines`), and provides 17 built-in functions.
 5. **Diagnostics & CLI ([`src/errors.ts`](src/errors.ts) & [`src/cli.ts`](src/cli.ts))**: Formats errors with source line snippets, caret underlines (`^~~~`), and Levenshtein `"Did you mean ...?"` suggestions, plus a CLI and interactive REPL.
-
----
-
-## Getting Started
-
-### Build & Test
-
-```bash
-npm run build
-npm test
-```
-
-### Run `.mini` Files via CLI
-
-```bash
-# Run a .mini file directly
-./mini examples/hello.mini
-# or via npm
-npm run mini -- examples/hello.mini
-
-# Evaluate inline code
-./mini -e 'assign x to the total of 10 and 5; show x'
-
-# Inspect Lexer Tokens
-./mini --tokens examples/hello.mini
-
-# Inspect Parsed AST (JSON)
-./mini --ast examples/hello.mini
-
-# Launch Interactive REPL
-./mini
-```
 
 ---
 
@@ -91,7 +126,7 @@ decrease x by 2
 
 ### 3. Arithmetic (Natural English & Symbolic)
 
-Mini supports both prefix English phrases, infix English words, and standard math symbols:
+Mini supports prefix English phrases, infix English words, and standard math symbols:
 
 | Operation | Prefix English | Infix English | Symbolic |
 | :--- | :--- | :--- | :--- |
@@ -224,28 +259,36 @@ assign numbers at 1 to 25   # [10, 25, 30, 40]
 
 ---
 
-## Meaningful Error Messages
+## VS Code Extension
 
-Mini pinpoints errors with file, line, column, source snippet, caret underline, and actionable hints:
-
-```text
-Name Error: Variable 'total_pric' is not defined
-  --> cart.mini:3:6
-   |
- 3 | show total_pric
-   |      ^~~~~~~~~~
-  Hint: Did you mean 'total_price'? Or initialize 'total_pric' first with: assign total_pric to <value>
-```
+The [`editors/vscode-mini/`](editors/vscode-mini/) directory contains a complete Visual Studio Code extension with:
+- Syntax highlighting (`syntaxes/mini.tmLanguage.json`)
+- Dark and light `.mini` file icons (`icons/mini-dark.svg`, `icons/mini-light.svg`)
+- Code snippets (`snippets/mini.code-snippets`)
+- Live syntax & lexer error diagnostics in the **Problems** pane (`out/extension.js`)
+- One-click **Mini: Run Current .mini File** button in the editor toolbar
 
 ---
 
 ## Practical Examples
 
-Explore the [`examples/`](examples) folder:
+Explore the [`examples/`](examples/) folder:
 - [`examples/hello.mini`](examples/hello.mini) — Functions, `the total of`, and `show`
 - [`examples/arithmetic.mini`](examples/arithmetic.mini) — Prefix and infix natural-English math
 - [`examples/fibonacci.mini`](examples/fibonacci.mini) — Recursive Fibonacci & list building
 - [`examples/fizzbuzz.mini`](examples/fizzbuzz.mini) — Classic FizzBuzz with `remainder of` and `otherwise if`
 - [`examples/prime_checker.mini`](examples/prime_checker.mini) — Prime number sieve using `while` loops and functions
 - [`examples/shopping_cart.mini`](examples/shopping_cart.mini) — Receipt subtotal, bulk discount, and tax calculator
+- [`examples/gradebook.mini`](examples/gradebook.mini) — Student grade statistics and letter grade classification
+- [`examples/temperature_converter.mini`](examples/temperature_converter.mini) — Celsius to Fahrenheit and Kelvin conversion table
+
+---
+
+## License
+
+Released under the [MIT License](LICENSE).
+
+## License
+
+Released under the [MIT License](LICENSE).
 

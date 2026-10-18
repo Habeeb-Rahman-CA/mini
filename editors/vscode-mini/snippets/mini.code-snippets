@@ -1,0 +1,79 @@
+{
+  "Make Single-Line Function": {
+    "prefix": "make",
+    "body": [
+      "make ${1:name}(${2:a, b}) = ${3:a + b}"
+    ],
+    "description": "Define a single-line Mini function"
+  },
+  "Make Multi-Line Function": {
+    "prefix": "makefn",
+    "body": [
+      "make ${1:name}(${2:param})",
+      "  ${3:# body}",
+      "  give ${4:result}",
+      "end"
+    ],
+    "description": "Define a multi-line Mini function block"
+  },
+  "Assign Variable": {
+    "prefix": "assign",
+    "body": [
+      "assign ${1:name} to ${2:value}"
+    ],
+    "description": "Assign a value to a variable"
+  },
+  "Assign Total Of": {
+    "prefix": "total",
+    "body": [
+      "assign ${1:x} to the total of ${2:10} and ${3:5}"
+    ],
+    "description": "Assign the total of two values"
+  },
+  "If Block": {
+    "prefix": "if",
+    "body": [
+      "if ${1:x} is ${2:greater than} ${3:10}",
+      "  show ${4:\"large\"}",
+      "otherwise",
+      "  show ${5:\"small\"}",
+      "end"
+    ],
+    "description": "Multi-line conditional block"
+  },
+  "For Range Loop": {
+    "prefix": "for",
+    "body": [
+      "for ${1:i} from ${2:1} to ${3:10}",
+      "  show ${1:i}",
+      "end"
+    ],
+    "description": "For range loop"
+  },
+  "For Each Loop": {
+    "prefix": "foreach",
+    "body": [
+      "for each ${1:item} in ${2:items}",
+      "  show ${1:item}",
+      "end"
+    ],
+    "description": "Iterate over a list or string"
+  },
+  "Repeat N Times": {
+    "prefix": "repeat",
+    "body": [
+      "repeat ${1:5} times",
+      "  ${2:show \"Hello\"}",
+      "end"
+    ],
+    "description": "Repeat a block N times"
+  },
+  "Show Value": {
+    "prefix": "show",
+    "body": [
+      "show ${1:value}"
+    ],
+    "description": "Display output"
+  }
+}
+

@@ -1,0 +1,23 @@
+name: Feature / Syntax Proposal
+description: Suggest a new natural-English phrase, built-in function, or tooling improvement
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed Syntax or Feature
+      description: Show how the proposed syntax or feature would look in a .mini program.
+      placeholder: |
+        # Example proposed syntax:
+        ...
+    validations:
+      required: true
+  - type: textarea
+    id: motivation
+    attributes:
+      label: Motivation & Readability
+      description: Why does this fit Mini's goal of short, readable, consistent natural English?
+    validations:
+      required: true
+

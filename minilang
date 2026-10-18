@@ -1,0 +1,11 @@
+#!/usr/bin/env node
+import { runCli } from "./dist/src/cli.js";
+
+const args = process.argv.slice(2);
+const isInteractiveRepl =
+  args.length === 0 || (args.length === 1 && args[0] === "repl");
+const exitCode = runCli(args);
+if (!isInteractiveRepl) {
+  process.exit(exitCode);
+}
+

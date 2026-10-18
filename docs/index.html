@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mini Programming Language (minilang) — Documentation</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <aside class="sidebar">
+    <a href="#overview" class="brand">
+      <span>Mini</span>
+      <span class="brand-badge">v1.0.0</span>
+    </a>
+    <div class="brand-subtitle">Natural-English Programming Language</div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">Getting Started</div>
+      <ul class="nav-list">
+        <li><a href="#overview">Overview</a></li>
+        <li><a href="#playground">Live Playground</a></li>
+        <li><a href="#installation">Installation &amp; CLI</a></li>
+        <li><a href="#vscode">VS Code Extension</a></li>
+      </ul>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">Language Reference</div>
+      <ul class="nav-list">
+        <li><a href="#variables">Variables &amp; Mutation</a></li>
+        <li><a href="#arithmetic">Natural-English Arithmetic</a></li>
+        <li><a href="#comparisons">Comparisons &amp; Logic</a></li>
+        <li><a href="#functions">Functions &amp; Recursion</a></li>
+        <li><a href="#conditionals">Conditionals</a></li>
+        <li><a href="#loops">Loops &amp; Control</a></li>
+        <li><a href="#lists">Lists &amp; Standard Library</a></li>
+      </ul>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">Operations &amp; Help</div>
+      <ul class="nav-list">
+        <li><a href="#safety">Safety &amp; Execution Limits</a></li>
+        <li><a href="#troubleshooting">Troubleshooting &amp; Errors</a></li>
+        <li><a href="#contributing">Contributing &amp; Releases</a></li>
+      </ul>
+    </div>
+  </aside>
+
+  <main class="main">
+    <section id="overview" class="hero">
+      <h1>Mini Programming Language</h1>
+      <p>
+        <strong>Mini (`minilang`)</strong> is an expressive, readable programming language that uses clear natural English instead of cryptic punctuation—built from scratch in TypeScript with a dedicated Lexer, Recursive-Descent Parser, AST, Expression Evaluator, and Interpreter (zero <code>eval()</code>).
+      </p>
+      <pre><code>make add(a, b) = a + b
+assign x to the total of 10 and 5
+show add(x, 2)   # Outputs: 17</code></pre>
+      <div class="hero-actions">
+        <a href="#playground" class="btn btn-primary">Try in Live Playground</a>
+        <a href="#installation" class="btn btn-secondary">Install CLI (`npm i -g minilang-cli`)</a>
+        <a href="https://github.com/Habeeb-Rahman-CA/mini" class="btn btn-secondary" target="_blank" rel="noopener">GitHub Repository</a>
+      </div>
+    </section>
+
+    <section id="playground">
+      <h2>Interactive Browser Playground</h2>
+      <p>
+        Run real <code>.mini</code> code directly in your browser using the compiled Mini AST interpreter, or inspect the Lexer tokens and Abstract Syntax Tree:
+      </p>
+      <div class="playground-card">
+        <div class="playground-toolbar">
+          <div class="playground-controls">
+            <label for="playground-example"><strong>Example:</strong></label>
+            <select id="playground-example">
+              <option value="hello">Hello Mini (Prompt Example)</option>
+              <option value="arithmetic">Natural-English Arithmetic</option>
+              <option value="fibonacci">Recursive Fibonacci</option>
+              <option value="fizzbuzz">FizzBuzz (1..15)</option>
+              <option value="primes">Prime Number Sieve</option>
+              <option value="cart">Shopping Cart Calculator</option>
+            </select>
+          </div>
+          <div class="playground-controls">
+            <button id="btn-run" class="btn btn-primary">Run (Ctrl+Enter)</button>
+            <button id="btn-tokens" class="btn btn-secondary">Tokens</button>
+            <button id="btn-ast" class="btn btn-secondary">AST JSON</button>
+          </div>
+        </div>
+        <div class="playground-grid">
+          <textarea id="playground-code" class="playground-editor" spellcheck="false" aria-label="Mini source code editor"></textarea>
+          <div id="playground-output" class="playground-output" aria-live="polite"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="installation">
+      <h2>Installation &amp; CLI Usage</h2>
+      <h3>1. Global Installation via npm</h3>
+      <pre><code>npm install -g minilang-cli</code></pre>
+      <p>Once installed globally, both <code>minilang</code> and <code>mini</code> commands are available in any terminal on Linux, macOS, and Windows:</p>
+      <pre><code># Run a .mini file
+minilang run examples/hello.mini
+minilang examples/hello.mini
+
+# Start the interactive REPL
+minilang repl
+
+# Validate syntax without executing
+minilang check examples/hello.mini
+minilang check --json examples/hello.mini
+
+# Evaluate inline code
+minilang -e 'assign x to the total of 10 and 5; show x'
+
+# Inspect Lexer Tokens or Parsed AST
+minilang --tokens examples/hello.mini
+minilang --ast examples/hello.mini
+
+# Check version and help
+minilang --version
+minilang --help</code></pre>
+
+      <h3>2. Standalone Single-File Bundle &amp; Native Binary</h3>
+      <p>To build self-contained single-file bundles (or Node.js Single Executable Applications for environments without npm):</p>
+      <pre><code>npm run build
+npm run build:standalone
+node dist/standalone/minilang.mjs run examples/hello.mini</code></pre>
+    </section>
+
+    <section id="vscode">
+      <h2>VS Code Extension</h2>
+      <p>
+        The repository includes a complete VS Code extension in <code>editors/vscode-mini/</code> providing:
+      </p>
+      <div class="card-grid">
+        <div class="card">
+          <h4>Syntax Highlighting</h4>
+          <p>TextMate grammar highlighting natural-English phrases, functions, loops, literals, and comments.</p>
+        </div>
+        <div class="card">
+          <h4>Live Error Diagnostics</h4>
+          <p>Real-time squiggly underlines and actionable hints powered by <code>checkMini()</code>.</p>
+        </div>
+        <div class="card">
+          <h4>File Icons &amp; Snippets</h4>
+          <p>Custom dark/light <code>.mini</code> icons, code folding, auto-indentation, and snippets.</p>
+        </div>
+      </div>
+      <pre><code># Package or install locally in VS Code:
+cd editors/vscode-mini
+npx @vscode/vsce package
+code --install-extension minilang-vscode-1.0.0.vsix</code></pre>
+    </section>
+
+    <section id="variables">
+      <h2>Variables &amp; Mutation</h2>
+      <p>Create or update variables using natural English or standard assignment:</p>
+      <pre><code>assign x to 10
+set name to "Alice"
+let active be true
+count = 0
+
+# In-place numeric updates
+increase count by 5
+decrease count by 1</code></pre>
+    </section>
+
+    <section id="arithmetic">
+      <h2>Natural-English &amp; Symbolic Arithmetic</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Operation</th>
+            <th>Prefix English Phrase</th>
+            <th>Infix English</th>
+            <th>Symbolic</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Addition</td>
+            <td><code>the total of a and b</code> / <code>the sum of a and b</code></td>
+            <td><code>a plus b</code> / <code>a added to b</code></td>
+            <td><code>a + b</code></td>
+          </tr>
+          <tr>
+            <td>Subtraction</td>
+            <td><code>the difference of a and b</code></td>
+            <td><code>a minus b</code></td>
+            <td><code>a - b</code></td>
+          </tr>
+          <tr>
+            <td>Multiplication</td>
+            <td><code>the product of a and b</code></td>
+            <td><code>a times b</code> / <code>a multiplied by b</code></td>
+            <td><code>a * b</code></td>
+          </tr>
+          <tr>
+            <td>Division</td>
+            <td><code>the quotient of a and b</code></td>
+            <td><code>a divided by b</code> / <code>a over b</code></td>
+            <td><code>a / b</code></td>
+          </tr>
+          <tr>
+            <td>Remainder</td>
+            <td><code>the remainder of a and b</code></td>
+            <td><code>a modulo b</code> / <code>a mod b</code></td>
+            <td><code>a % b</code></td>
+          </tr>
+          <tr>
+            <td>Exponentiation</td>
+            <td>—</td>
+            <td><code>a to the power of b</code></td>
+            <td><code>a ^ b</code> / <code>a ** b</code></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="comparisons">
+      <h2>Comparisons &amp; Logic</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Comparison</th>
+            <th>Natural English</th>
+            <th>Symbolic</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Equal</td>
+            <td><code>is equal to</code>, <code>equals</code>, <code>is</code></td>
+            <td><code>==</code></td>
+          </tr>
+          <tr>
+            <td>Not Equal</td>
+            <td><code>is not equal to</code>, <code>is not</code>, <code>isn't</code></td>
+            <td><code>!=</code></td>
+          </tr>
+          <tr>
+            <td>Greater Than</td>
+            <td><code>is greater than</code>, <code>is more than</code>, <code>exceeds</code></td>
+            <td><code>&gt;</code></td>
+          </tr>
+          <tr>
+            <td>Less Than</td>
+            <td><code>is less than</code>, <code>is under</code>, <code>is below</code></td>
+            <td><code>&lt;</code></td>
+          </tr>
+          <tr>
+            <td>Greater or Equal</td>
+            <td><code>is at least</code>, <code>is greater than or equal to</code></td>
+            <td><code>&gt;=</code></td>
+          </tr>
+          <tr>
+            <td>Less or Equal</td>
+            <td><code>is at most</code>, <code>is less than or equal to</code></td>
+            <td><code>&lt;=</code></td>
+          </tr>
+          <tr>
+            <td>Boolean Logic</td>
+            <td><code>and</code>, <code>or</code>, <code>not</code></td>
+            <td><code>&amp;&amp;</code>, <code>||</code>, <code>!</code></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="functions">
+      <h2>Functions &amp; Recursion</h2>
+      <pre><code># Single-line expression function
+make add(a, b) = a + b
+
+# Multi-line block function with 'give' (or 'return')
+make factorial(n)
+  if n is at most 1
+    give 1
+  end
+  give n * factorial(n - 1)
+end
+
+show add(10, 5)
+show factorial(5)</code></pre>
+    </section>
+
+    <section id="conditionals">
+      <h2>Conditionals</h2>
+      <pre><code>if score is at least 90
+  show "Grade: A"
+otherwise if score is at least 80
+  show "Grade: B"
+otherwise
+  show "Keep practicing!"
+end
+
+# Single-line form:
+if x is greater than 10 then show "big" otherwise show "small"</code></pre>
+    </section>
+
+    <section id="loops">
+      <h2>Loops &amp; Control</h2>
+      <pre><code># Repeat N times
+repeat 3 times
+  show "Hello!"
+end
+
+# While loop
+assign n to 1
+while n is less than 16
+  assign n to n * 2
+end
+
+# For range loop (with optional 'by' step)
+for i from 1 to 5
+  show i
+end
+
+# For-each loop with 'skip' (continue) and 'stop' (break)
+assign items to list of 10, 20, 30, 40
+for each item in items
+  if item is 20 then skip
+  if item is 40 then stop
+  show item
+end</code></pre>
+    </section>
+
+    <section id="lists">
+      <h2>Lists &amp; Standard Library</h2>
+      <pre><code>assign fruits to list of "apple", "banana", "cherry"
+push "date" to fruits
+show length of fruits          # 4
+show fruits at 0               # "apple"
+show fruits at -1              # "date"
+assign fruits at 1 to "berry"
+show join(fruits, ", ")</code></pre>
+      <p>
+        <strong>Built-in Functions:</strong>
+        <code>abs(n)</code>, <code>round(n, [d])</code>, <code>floor(n)</code>, <code>ceil(n)</code>, <code>sqrt(n)</code>, <code>min(...)</code>, <code>max(...)</code>, <code>upper(s)</code>, <code>lower(s)</code>, <code>trim(s)</code>, <code>split(s, sep)</code>, <code>join(list, [sep])</code>, <code>length(x)</code>, <code>range(start, end, [step])</code>, <code>type(x)</code>, <code>number(x)</code>, <code>text(x)</code>.
+      </p>
+    </section>
+
+    <section id="safety">
+      <h2>Safety &amp; Execution Limits</h2>
+      <p>
+        Mini executes all code through a custom TypeScript AST interpreter without <code>eval()</code> or <code>Function()</code>, and enforces configurable resource guards out of the box:
+      </p>
+      <table>
+        <thead>
+          <tr>
+            <th>Guard</th>
+            <th>Default Limit</th>
+            <th>CLI Flag</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Maximum Loop Iterations</td>
+            <td><code>100,000</code> iterations per loop</td>
+            <td><code>--max-iterations &lt;n&gt;</code></td>
+          </tr>
+          <tr>
+            <td>Maximum Call Stack Depth</td>
+            <td><code>1,000</code> recursive frames</td>
+            <td><code>--max-depth &lt;n&gt;</code></td>
+          </tr>
+          <tr>
+            <td>Wall-Clock Execution Timeout</td>
+            <td><code>5,000</code> ms (<code>0</code> disables)</td>
+            <td><code>--timeout &lt;ms&gt;</code></td>
+          </tr>
+          <tr>
+            <td>Output Flood Guard</td>
+            <td><code>10,000</code> lines</td>
+            <td>Programmatic <code>maxOutputLines</code></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="troubleshooting">
+      <h2>Troubleshooting &amp; Error Reference</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Error Category</th>
+            <th>Common Cause</th>
+            <th>How to Fix</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>Lexer Error</code></td>
+            <td>Unterminated string literal or invalid symbol character.</td>
+            <td>Ensure every <code>"</code> or <code>'</code> is closed on the same line.</td>
+          </tr>
+          <tr>
+            <td><code>Syntax Error</code></td>
+            <td>Missing <code>end</code> on a block, missing <code>to</code> in <code>assign</code>, or missing <code>and</code> in <code>total of a and b</code>.</td>
+            <td>Follow the <code>Hint:</code> line printed beneath the caret underline.</td>
+          </tr>
+          <tr>
+            <td><code>Name Error</code></td>
+            <td>Referencing a variable or function before defining it, or a spelling typo.</td>
+            <td>Check the suggested <code>Did you mean '...'?</code> hint or initialize with <code>assign</code>.</td>
+          </tr>
+          <tr>
+            <td><code>Type Error</code></td>
+            <td>Performing math on incompatible types or indexing a non-list.</td>
+            <td>Use <code>type(x)</code> or <code>number(x)</code> to inspect/convert values.</td>
+          </tr>
+          <tr>
+            <td><code>Zero Division Error</code></td>
+            <td>Dividing or computing remainder by <code>0</code>.</td>
+            <td>Guard the divisor with <code>if divisor is not 0</code>.</td>
+          </tr>
+          <tr>
+            <td><code>Index Error</code></td>
+            <td>Accessing a list/string index outside <code>0..length-1</code>.</td>
+            <td>Check <code>length of list</code> before indexing.</td>
+          </tr>
+          <tr>
+            <td><code>Argument Error</code></td>
+            <td>Calling a function with too few or too many arguments.</td>
+            <td>Match the parameter count declared in <code>make fn(...)</code>.</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="contributing">
+      <h2>Contributing &amp; Releases</h2>
+      <p>
+        We welcome contributions! See <a href="https://github.com/Habeeb-Rahman-CA/mini/blob/main/CONTRIBUTING.md" style="color: var(--accent);">CONTRIBUTING.md</a> for architecture details, test instructions (<code>npm test</code>), and release workflows.
+      </p>
+    </section>
+  </main>
+
+  <script type="module" src="./app.js"></script>
+</body>
+</html>
+
