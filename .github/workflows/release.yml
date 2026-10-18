@@ -9,7 +9,6 @@ on:
 permissions:
   contents: write
   id-token: write
-  pages: write
 
 jobs:
   verify:
@@ -106,26 +105,3 @@ jobs:
           else
             echo "Skipping Marketplace publish: VSCE_PAT secret is not configured."
           fi
-
-  deploy-docs:
-    name: Deploy Documentation Site to GitHub Pages
-    needs: verify
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: "24.x"
-          cache: "npm"
-      - run: npm ci
-      - run: npm run build
-      - uses: actions/configure-pages@v5
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: "./docs"
-      - id: deployment
-        uses: actions/deploy-pages@v4
-
