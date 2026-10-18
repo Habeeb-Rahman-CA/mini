@@ -1,12 +1,12 @@
 /**
-
  * Mini Programming Language — Browser Engine Bundle (Auto-generated from TypeScript build)
-
  */
+(function (globalScope) {
+"use strict";
 
 // --- tokens.js ---
 
-export var TokenType;
+var TokenType;
 (function (TokenType) {
     // Literals & Identifiers
     TokenType["NUMBER"] = "NUMBER";
@@ -83,7 +83,7 @@ export var TokenType;
     TokenType["NEWLINE"] = "NEWLINE";
     TokenType["EOF"] = "EOF";
 })(TokenType || (TokenType = {}));
-export const SINGLE_WORD_KEYWORDS = {
+const SINGLE_WORD_KEYWORDS = {
     // Booleans & Null
     true: TokenType.BOOLEAN,
     false: TokenType.BOOLEAN,
@@ -163,7 +163,7 @@ export const SINGLE_WORD_KEYWORDS = {
 
 // --- errors.js ---
 
-export class MiniError extends Error {
+class MiniError extends Error {
     category;
     loc;
     sourceLines;
@@ -210,19 +210,19 @@ export class MiniError extends Error {
         return lines.join("\n");
     }
 }
-export class LexerError extends MiniError {
+class LexerError extends MiniError {
     constructor(message, loc, sourceCode, hint) {
         super("Lexer Error", message, loc, sourceCode, hint);
         this.name = "LexerError";
     }
 }
-export class ParseError extends MiniError {
+class ParseError extends MiniError {
     constructor(message, loc, sourceCode, hint) {
         super("Syntax Error", message, loc, sourceCode, hint);
         this.name = "ParseError";
     }
 }
-export class RuntimeError extends MiniError {
+class RuntimeError extends MiniError {
     constructor(category, message, loc, sourceCode, hint) {
         super(category, message, loc, sourceCode, hint);
         this.name = "RuntimeError";
@@ -231,7 +231,7 @@ export class RuntimeError extends MiniError {
 /**
  * Computes Levenshtein distance between two strings for helpful "Did you mean?" suggestions.
  */
-export function levenshteinDistance(a, b) {
+function levenshteinDistance(a, b) {
     const m = a.length;
     const n = b.length;
     const dp = Array.from({ length: m + 1 }, () => new Array(n + 1).fill(0));
@@ -247,7 +247,7 @@ export function levenshteinDistance(a, b) {
     }
     return dp[m][n];
 }
-export function findClosestMatch(target, candidates, maxDistance = 2) {
+function findClosestMatch(target, candidates, maxDistance = 2) {
     let bestMatch;
     let bestDist = maxDistance + 1;
     for (const candidate of candidates) {
@@ -299,7 +299,7 @@ const MULTI_WORD_PHRASES = [
     { words: ["multiplied", "by"], type: TokenType.STAR },
     { words: ["divided", "by"], type: TokenType.SLASH },
 ];
-export class Lexer {
+class Lexer {
     source;
     file;
     pos = 0;
@@ -727,7 +727,7 @@ const CONTEXTUAL_IDENTIFIER_TOKENS = new Set([
     TokenType.LIST,
     TokenType.TIMES,
 ]);
-export class Parser {
+class Parser {
     tokens;
     source;
     current = 0;
@@ -1790,7 +1790,7 @@ export class Parser {
 
 // --- environment.js ---
 
-export class Environment {
+class Environment {
     values = new Map();
     functions = new Map();
     parent;
@@ -1877,7 +1877,7 @@ export class Environment {
         return names;
     }
 }
-export function formatMiniValue(value) {
+function formatMiniValue(value) {
     if (value === null)
         return "nothing";
     if (typeof value === "boolean")
@@ -1900,14 +1900,14 @@ export function formatMiniValue(value) {
     }
     return String(value);
 }
-export function getMiniTypeName(value) {
+function getMiniTypeName(value) {
     if (value === null)
         return "nothing";
     if (Array.isArray(value))
         return "list";
     return typeof value;
 }
-export function isTruthy(value) {
+function isTruthy(value) {
     if (value === null || value === false)
         return false;
     if (value === 0 || value === "")
@@ -1916,7 +1916,7 @@ export function isTruthy(value) {
         return false;
     return true;
 }
-export function isEqual(a, b) {
+function isEqual(a, b) {
     if (Array.isArray(a) && Array.isArray(b)) {
         if (a.length !== b.length)
             return false;
@@ -1931,7 +1931,7 @@ export function isEqual(a, b) {
 
 // --- evaluator.js ---
 
-export class Evaluator {
+class Evaluator {
     source;
     invokeUserFunction;
     constructor(source, invokeUserFunction) {
@@ -2128,7 +2128,7 @@ class LoopSignal {
         this.loc = loc;
     }
 }
-export class Interpreter {
+class Interpreter {
     source;
     onOutput;
     maxCallDepth;
@@ -2583,8 +2583,8 @@ export class Interpreter {
 
 // --- index.js ---
 
-export const VERSION = "1.0.0";
-export function runMini(source, options = {}) {
+const VERSION = "1.0.0";
+function runMini(source, options = {}) {
     const file = options.file ?? "<stdin>";
     const lexer = new Lexer(source, file);
     const tokens = lexer.tokenize();
@@ -2607,7 +2607,7 @@ export function runMini(source, options = {}) {
  * Validates Mini source code (Lexer + Parser) without executing statements.
  * Useful for CLI syntax checking (`minilang check`) and IDE/VS Code diagnostics.
  */
-export function checkMini(source, file = "<stdin>") {
+function checkMini(source, file = "<stdin>") {
     try {
         const lexer = new Lexer(source, file);
         const tokens = lexer.tokenize();
@@ -2641,3 +2641,22 @@ export function checkMini(source, file = "<stdin>") {
         throw err;
     }
 }
+
+globalScope.MiniLang = {
+  TokenType,
+  SINGLE_WORD_KEYWORDS,
+  MiniError,
+  LexerError,
+  ParseError,
+  RuntimeError,
+  Lexer,
+  Parser,
+  Environment,
+  Evaluator,
+  Interpreter,
+  VERSION,
+  runMini,
+  checkMini,
+  formatMiniValue
+};
+})(typeof window !== "undefined" ? window : globalThis);

@@ -90,22 +90,25 @@ show add(x, 2)   # Outputs: 17</code></pre>
             </select>
           </div>
           <div class="playground-controls">
-            <button id="btn-run" class="btn btn-primary">Run (Ctrl+Enter)</button>
-            <button id="btn-tokens" class="btn btn-secondary">Tokens</button>
-            <button id="btn-ast" class="btn btn-secondary">AST</button>
+            <button id="btn-run" class="btn btn-run-code">▶ Run (Ctrl+Enter)</button>
+            <button id="btn-tokens" class="btn btn-tool">Tokens</button>
+            <button id="btn-ast" class="btn btn-tool">AST</button>
           </div>
         </div>
         <div class="playground-grid">
           <div class="playground-editor-col">
             <div class="playground-pane-header">
-              <span>playground.mini</span>
+              <span class="pane-dot-group"><span class="pane-dot cyan"></span>playground.mini</span>
               <span>IntelliSense · Ctrl+Space</span>
             </div>
             <div class="code-editor-shell" id="editor-shell">
-              <div id="playground-gutter" class="editor-gutter" aria-hidden="true">1</div>
+              <div id="playground-gutter" class="editor-gutter" aria-hidden="true">1<br>2<br>3<br>4</div>
               <div class="editor-stage">
-                <pre id="playground-backdrop" class="editor-backdrop" aria-hidden="true"><code id="playground-highlight"></code></pre>
-                <textarea id="playground-code" class="playground-editor" spellcheck="false" autocomplete="off" autocapitalize="off" aria-label="Mini source code editor"></textarea>
+                <div id="playground-backdrop" class="editor-backdrop" aria-hidden="true"></div>
+                <textarea id="playground-code" class="playground-editor" spellcheck="false" autocomplete="off" autocapitalize="off" aria-label="Mini source code editor"># Quick Intro Example
+make add(a, b) = a + b
+assign x to the total of 10 and 5
+show add(x, 2)</textarea>
               </div>
               <div id="intellisense-popup" class="intellisense-popup" role="listbox" aria-label="Code completions"></div>
             </div>
@@ -116,10 +119,10 @@ show add(x, 2)   # Outputs: 17</code></pre>
           </div>
           <div class="playground-output-col">
             <div class="playground-pane-header">
-              <span id="playground-mode-label">STDOUT</span>
+              <span class="pane-dot-group"><span class="pane-dot green"></span><span id="playground-mode-label">TERMINAL STDOUT</span></span>
               <span id="playground-timing">Ready</span>
             </div>
-            <div id="playground-output" class="playground-output" aria-live="polite"></div>
+            <div id="playground-output" class="playground-output" aria-live="polite"><span class="term-cmd-line"><span class="term-cmd-prompt">$</span> minilang run playground.mini</span><span class="term-stdout-line">17</span></div>
           </div>
         </div>
       </div>
@@ -471,6 +474,7 @@ show join(fruits, ", ")</code></pre>
     </footer>
   </main>
 
-  <script type="module" src="./app.js"></script>
+  <script src="./assets/mini-browser.js"></script>
+  <script src="./app.js"></script>
 </body>
 </html>

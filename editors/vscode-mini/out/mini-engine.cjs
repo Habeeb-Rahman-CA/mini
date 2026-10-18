@@ -1,9 +1,4 @@
 "use strict";
-/**
-
- * Mini Programming Language — Browser Engine Bundle (Auto-generated from TypeScript build)
-
- */
 
 // --- tokens.js ---
 

@@ -1,8 +1,9 @@
 #!/usr/bin/env node
 /**
  * Builds:
- * 1. A single-file, zero-dependency ES module bundle of the Mini core engine
- *    for the interactive browser playground (docs/assets/mini-browser.js).
+ * 1. A single-file, zero-dependency browser bundle of the Mini core engine
+ *    for the interactive browser playground (docs/assets/mini-browser.js)
+ *    that exposes `window.MiniLang` (works on https://, http://, and file://).
  * 2. A CommonJS bundle (editors/vscode-mini/out/mini-engine.cjs) for the
  *    VS Code extension's live diagnostics provider.
  */
@@ -28,20 +29,17 @@ const MODULE_ORDER = [
   "index.js",
 ];
 
-function stripLocalImportsAndReexports(code) {
+function stripLocalImportsAndExports(code) {
   return code
     .replace(/^import\s+[\s\S]*?from\s+["']\.\/[^"']+["'];?\s*$/gm, "")
     .replace(/^export\s+\*\s+from\s+["']\.\/[^"']+["'];?\s*$/gm, "")
     .replace(/^export\s*\{\s*\};?\s*$/gm, "")
+    .replace(/^export\s+(class|function|const|let|var)\s+/gm, "$1 ")
     .replace(/\/\/# sourceMappingURL=.*$/gm, "")
     .trim();
 }
 
-const chunks = [
-  "/**",
-  " * Mini Programming Language — Browser Engine Bundle (Auto-generated from TypeScript build)",
-  " */",
-];
+const chunks = [];
 
 for (const modName of MODULE_ORDER) {
   const fullPath = path.join(DIST_SRC, modName);
@@ -51,27 +49,48 @@ for (const modName of MODULE_ORDER) {
   }
   const raw = fs.readFileSync(fullPath, "utf-8");
   chunks.push(`// --- ${modName} ---`);
-  chunks.push(stripLocalImportsAndReexports(raw));
+  chunks.push(stripLocalImportsAndExports(raw));
 }
 
-const esmBundle = chunks.join("\n\n") + "\n";
+const coreBody = chunks.join("\n\n");
+
+const browserBundle = `/**
+ * Mini Programming Language — Browser Engine Bundle (Auto-generated from TypeScript build)
+ */
+(function (globalScope) {
+"use strict";
+
+${coreBody}
+
+globalScope.MiniLang = {
+  TokenType,
+  SINGLE_WORD_KEYWORDS,
+  MiniError,
+  LexerError,
+  ParseError,
+  RuntimeError,
+  Lexer,
+  Parser,
+  Environment,
+  Evaluator,
+  Interpreter,
+  VERSION,
+  runMini,
+  checkMini,
+  formatMiniValue
+};
+})(typeof window !== "undefined" ? window : globalThis);
+`;
 
 fs.mkdirSync(OUT_DIR, { recursive: true });
-fs.writeFileSync(OUT_FILE, esmBundle, "utf-8");
+fs.writeFileSync(OUT_FILE, browserBundle, "utf-8");
 console.log(`Built browser engine bundle: ${path.relative(ROOT, OUT_FILE)}`);
 
-// Convert ESM exports to CJS for the VS Code extension engine
-const cjsCode =
-  `"use strict";\n` +
-  esmBundle.replace(
-    /^export\s+(class|function|const|let|var)\s+([a-zA-Z0-9_]+)/gm,
-    "$1 $2"
-  ) +
-  `\nmodule.exports = { TokenType, SINGLE_WORD_KEYWORDS, MiniError, LexerError, ParseError, RuntimeError, Lexer, Parser, Environment, Evaluator, Interpreter, VERSION, runMini, checkMini };\n`;
+// Convert to CJS for the VS Code extension engine
+const cjsCode = `"use strict";\n\n${coreBody}\n\nmodule.exports = { TokenType, SINGLE_WORD_KEYWORDS, MiniError, LexerError, ParseError, RuntimeError, Lexer, Parser, Environment, Evaluator, Interpreter, VERSION, runMini, checkMini };\n`;
 
 fs.mkdirSync(VSCODE_OUT_DIR, { recursive: true });
 fs.writeFileSync(VSCODE_ENGINE_FILE, cjsCode, "utf-8");
 console.log(
   `Built VS Code extension engine: ${path.relative(ROOT, VSCODE_ENGINE_FILE)}`
 );
-
