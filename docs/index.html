@@ -99,9 +99,20 @@ show add(x, 2)   # Outputs: 17</code></pre>
           <div class="playground-editor-col">
             <div class="playground-pane-header">
               <span>playground.mini</span>
-              <span>UTF-8</span>
+              <span>IntelliSense · Ctrl+Space</span>
             </div>
-            <textarea id="playground-code" class="playground-editor" spellcheck="false" aria-label="Mini source code editor"></textarea>
+            <div class="code-editor-shell" id="editor-shell">
+              <div id="playground-gutter" class="editor-gutter" aria-hidden="true">1</div>
+              <div class="editor-stage">
+                <pre id="playground-backdrop" class="editor-backdrop" aria-hidden="true"><code id="playground-highlight"></code></pre>
+                <textarea id="playground-code" class="playground-editor" spellcheck="false" autocomplete="off" autocapitalize="off" aria-label="Mini source code editor"></textarea>
+              </div>
+              <div id="intellisense-popup" class="intellisense-popup" role="listbox" aria-label="Code completions"></div>
+            </div>
+            <div id="editor-diagnostic-bar" class="editor-diagnostic-bar">
+              <span id="diagnostic-text">✓ Syntax valid</span>
+              <span id="cursor-pos">Ln 1, Col 1</span>
+            </div>
           </div>
           <div class="playground-output-col">
             <div class="playground-pane-header">
